@@ -105,11 +105,9 @@ namespace ImagensRepetidas
             foreach (List<string> iGrupo in resultadoBusca)
             {
                 contador++;
-                //listaFinal.Add($"Grupo {contador}:");
                 tabela.Rows.Add($"Grupo {contador}:");
                 foreach (string iPath in iGrupo)
                 {
-                    //listaFinal.Add(iPath);
                     tabela.Rows.Add(iPath);
                 }
             }
@@ -123,6 +121,25 @@ namespace ImagensRepetidas
             if (!string.IsNullOrEmpty(gPath) && Directory.Exists(gPath))
             {
                 System.Diagnostics.Process.Start("explorer.exe", gPath);
+            }
+        }
+
+        private void grdMain_Click(object sender, EventArgs e)
+        {
+            string selectedPath = grdMain.CurrentCell.Value.ToString();
+            if (File.Exists(selectedPath))
+            {
+                //usa o path da imagem selecionada para carregar o picturebox
+                try
+                {
+                    picPreview.Image = System.Drawing.Image.FromFile(selectedPath);
+                    //ajusta o tamanho da imagem para caber no picturebox
+                    picPreview.SizeMode = PictureBoxSizeMode.StretchImage;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Erro ao carregar a imagem: {ex.Message}");
+                }
             }
         }
     }

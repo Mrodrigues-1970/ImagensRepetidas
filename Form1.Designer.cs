@@ -33,8 +33,11 @@
             btProcurarPath = new Button();
             btIniciar = new Button();
             grdMain = new DataGridView();
+            Imagem = new DataGridViewTextBoxColumn();
             btExplorer = new Button();
+            picPreview = new PictureBox();
             ((System.ComponentModel.ISupportInitialize)grdMain).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)picPreview).BeginInit();
             SuspendLayout();
             // 
             // lblPath
@@ -70,12 +73,22 @@
             // 
             // grdMain
             // 
-            grdMain.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            grdMain.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             grdMain.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            grdMain.Columns.AddRange(new DataGridViewColumn[] { Imagem });
             grdMain.Location = new Point(34, 108);
             grdMain.Name = "grdMain";
-            grdMain.Size = new Size(1037, 501);
+            grdMain.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            grdMain.Size = new Size(574, 501);
             grdMain.TabIndex = 3;
+            grdMain.Click += grdMain_Click;
+            // 
+            // Imagem
+            // 
+            Imagem.DataPropertyName = "Imagem";
+            Imagem.HeaderText = "Imagem";
+            Imagem.Name = "Imagem";
+            Imagem.Width = 500;
             // 
             // btExplorer
             // 
@@ -87,11 +100,22 @@
             btExplorer.UseVisualStyleBackColor = true;
             btExplorer.Click += btExplorer_Click;
             // 
+            // picPreview
+            // 
+            picPreview.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
+            picPreview.BorderStyle = BorderStyle.FixedSingle;
+            picPreview.Location = new Point(659, 108);
+            picPreview.Name = "picPreview";
+            picPreview.Size = new Size(412, 501);
+            picPreview.TabIndex = 5;
+            picPreview.TabStop = false;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1108, 697);
+            Controls.Add(picPreview);
             Controls.Add(btExplorer);
             Controls.Add(grdMain);
             Controls.Add(btIniciar);
@@ -101,6 +125,7 @@
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Imagens Repetidas";
             ((System.ComponentModel.ISupportInitialize)grdMain).EndInit();
+            ((System.ComponentModel.ISupportInitialize)picPreview).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -113,5 +138,7 @@
         private Button btIniciar;
         private DataGridView grdMain;
         private Button btExplorer;
+        private DataGridViewTextBoxColumn Imagem;
+        private PictureBox picPreview;
     }
 }
