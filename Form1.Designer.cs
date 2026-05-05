@@ -109,6 +109,7 @@
             picPreview.Size = new Size(412, 501);
             picPreview.TabIndex = 5;
             picPreview.TabStop = false;
+            picPreview.DoubleClick += picPreview_DoubleClick;
             // 
             // Form1
             // 

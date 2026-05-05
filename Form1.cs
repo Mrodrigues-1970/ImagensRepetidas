@@ -113,6 +113,12 @@ namespace ImagensRepetidas
             }
             grdMain.DataSource = tabela;
             Cursor = Cursors.Default;
+
+            if (tabela.Rows.Count == 0)
+            {
+                MessageBox.Show("Nenhuma imagem similar encontrada.");
+            }
+
         }
 
         private void btExplorer_Click(object sender, EventArgs e)
@@ -141,6 +147,11 @@ namespace ImagensRepetidas
                     MessageBox.Show($"Erro ao carregar a imagem: {ex.Message}");
                 }
             }
+        }
+
+        private void picPreview_DoubleClick(object sender, EventArgs e)
+        {
+            picPreview.Image = null;
         }
     }
 }
