@@ -20,9 +20,16 @@ namespace ImagensRepetidas
 
         private void btProcurarPath_Click(object sender, EventArgs e)
         {
+
+
             //Busca o caminho da pasta onde estão as imagens
             using (FolderBrowserDialog fbd = new FolderBrowserDialog())
             {
+                if(!Path.Exists(fbd.InitialDirectory))
+                {
+                    fbd.InitialDirectory = "D:\\";
+                }
+
                 if (fbd.ShowDialog() == DialogResult.OK)
                 {
                     gPath = fbd.SelectedPath;
@@ -130,7 +137,45 @@ namespace ImagensRepetidas
             }
         }
 
-        private void grdMain_Click(object sender, EventArgs e)
+        private void picPreview_DoubleClick(object sender, EventArgs e)
+        {
+            picPreview.Image = null;
+        }
+
+        private void btDeletar_Click(object sender, EventArgs e)
+        {
+            DialogResult result = DialogResult.Yes;
+            if (!chkAutorizarDelete.Checked) {
+                //Pede confirmação para deletar a imagem selecionada
+                result = MessageBox.Show("Tem certeza que deseja deletar a imagem selecionada?", "Confirmação", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            }
+
+
+            foreach (DataGridViewRow iRow in grdMain.SelectedRows)
+            {
+
+
+                if (result == DialogResult.Yes)
+                {
+                    string selectedPath = iRow.Cells[0].Value.ToString();
+                    try
+                    {
+                        //libera o arquivo que está sendo exibido no picturebox para permitir a exclusão
+                        picPreview.Image = null;
+
+                        File.Delete(selectedPath);
+                        //MessageBox.Show("Imagem deletada com sucesso.");
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Erro ao deletar a imagem: {ex.Message}");
+                    }
+                }
+            }
+
+        }
+
+        private void grdMain_DoubleClick(object sender, EventArgs e)
         {
             string selectedPath = grdMain.CurrentCell.Value.ToString();
             if (File.Exists(selectedPath))
@@ -147,11 +192,6 @@ namespace ImagensRepetidas
                     MessageBox.Show($"Erro ao carregar a imagem: {ex.Message}");
                 }
             }
-        }
-
-        private void picPreview_DoubleClick(object sender, EventArgs e)
-        {
-            picPreview.Image = null;
         }
     }
 }

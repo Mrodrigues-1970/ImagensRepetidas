@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             folderBrowserDialog1 = new FolderBrowserDialog();
             lblPath = new Label();
             btProcurarPath = new Button();
@@ -36,6 +37,8 @@
             Imagem = new DataGridViewTextBoxColumn();
             btExplorer = new Button();
             picPreview = new PictureBox();
+            btDeletar = new Button();
+            chkAutorizarDelete = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)grdMain).BeginInit();
             ((System.ComponentModel.ISupportInitialize)picPreview).BeginInit();
             SuspendLayout();
@@ -53,7 +56,7 @@
             // btProcurarPath
             // 
             btProcurarPath.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btProcurarPath.Location = new Point(823, 28);
+            btProcurarPath.Location = new Point(733, 28);
             btProcurarPath.Name = "btProcurarPath";
             btProcurarPath.Size = new Size(75, 23);
             btProcurarPath.TabIndex = 1;
@@ -63,7 +66,8 @@
             // 
             // btIniciar
             // 
-            btIniciar.Location = new Point(911, 28);
+            btIniciar.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btIniciar.Location = new Point(821, 28);
             btIniciar.Name = "btIniciar";
             btIniciar.Size = new Size(75, 23);
             btIniciar.TabIndex = 2;
@@ -81,7 +85,7 @@
             grdMain.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             grdMain.Size = new Size(574, 501);
             grdMain.TabIndex = 3;
-            grdMain.Click += grdMain_Click;
+            grdMain.DoubleClick += grdMain_DoubleClick;
             // 
             // Imagem
             // 
@@ -92,7 +96,8 @@
             // 
             // btExplorer
             // 
-            btExplorer.Location = new Point(996, 31);
+            btExplorer.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btExplorer.Location = new Point(906, 31);
             btExplorer.Name = "btExplorer";
             btExplorer.Size = new Size(75, 23);
             btExplorer.TabIndex = 4;
@@ -111,17 +116,41 @@
             picPreview.TabStop = false;
             picPreview.DoubleClick += picPreview_DoubleClick;
             // 
+            // btDeletar
+            // 
+            btDeletar.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btDeletar.Location = new Point(996, 31);
+            btDeletar.Name = "btDeletar";
+            btDeletar.Size = new Size(75, 23);
+            btDeletar.TabIndex = 6;
+            btDeletar.Text = "Deletar";
+            btDeletar.UseVisualStyleBackColor = true;
+            btDeletar.Click += btDeletar_Click;
+            // 
+            // chkAutorizarDelete
+            // 
+            chkAutorizarDelete.AutoSize = true;
+            chkAutorizarDelete.Location = new Point(953, 74);
+            chkAutorizarDelete.Name = "chkAutorizarDelete";
+            chkAutorizarDelete.Size = new Size(125, 19);
+            chkAutorizarDelete.TabIndex = 7;
+            chkAutorizarDelete.Text = "Autorização Delete";
+            chkAutorizarDelete.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1108, 697);
+            Controls.Add(chkAutorizarDelete);
+            Controls.Add(btDeletar);
             Controls.Add(picPreview);
             Controls.Add(btExplorer);
             Controls.Add(grdMain);
             Controls.Add(btIniciar);
             Controls.Add(btProcurarPath);
             Controls.Add(lblPath);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "Form1";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Imagens Repetidas";
@@ -141,5 +170,7 @@
         private Button btExplorer;
         private DataGridViewTextBoxColumn Imagem;
         private PictureBox picPreview;
+        private Button btDeletar;
+        private CheckBox chkAutorizarDelete;
     }
 }
