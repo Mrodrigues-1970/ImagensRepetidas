@@ -12,6 +12,8 @@ namespace ImagensRepetidas
     {
         string gPath = string.Empty;
         List<List<string>> listasInternasRepetidos;
+        DataTable tabelaPrincipal;
+        List<string> listaDeletaveis = new List<string>();
 
         public Form1()
         {
@@ -37,7 +39,6 @@ namespace ImagensRepetidas
                 }
             }
         }
-
 
         static List<List<string>> EncontarSimilares(string path)
         {
@@ -112,36 +113,22 @@ namespace ImagensRepetidas
 
         private void btDeletar_Click(object sender, EventArgs e)
         {
-            DialogResult result = DialogResult.Yes;
-            if (!chkAutorizarDelete.Checked)
-            {
-                //Pede confirmação para deletar a imagem selecionada
-                result = MessageBox.Show("Tem certeza que deseja deletar a imagem selecionada?", "Confirmação", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            }
-
-
             foreach (DataGridViewRow iRow in grdMain.SelectedRows)
             {
-
-
-                if (result == DialogResult.Yes)
+                string selectedPath = iRow.Cells[0].Value.ToString();
+                try
                 {
-                    string selectedPath = iRow.Cells[0].Value.ToString();
-                    try
-                    {
-                        //libera o arquivo que está sendo exibido no picturebox para permitir a exclusão
-                        picPreview.Image = null;
+                    //libera o arquivo que está sendo exibido no picturebox para permitir a exclusão
+                    picPreview.Image = null;
 
-                        File.Delete(selectedPath);
-                        //MessageBox.Show("Imagem deletada com sucesso.");
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show($"Erro ao deletar a imagem: {ex.Message}");
-                    }
+                    File.Delete(selectedPath);
+                    //MessageBox.Show("Imagem deletada com sucesso.");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Erro ao deletar a imagem: {ex.Message}");
                 }
             }
-
         }
 
         private void grdMain_DoubleClick(object sender, EventArgs e)
@@ -221,34 +208,42 @@ namespace ImagensRepetidas
             lstGrupos.DataSource = grupos;
         }
 
-
         private void Escanear()
         {
             Cursor = Cursors.WaitCursor;
             listasInternasRepetidos = new List<List<string>>();
             int contador = 0;
+            bool primeiraImagem = true;
 
-            DataTable tabela = new DataTable();
-            tabela.Columns.Add("Imagem", typeof(string));
+            tabelaPrincipal = new DataTable();
+            tabelaPrincipal.Columns.Add("Imagem", typeof(string));
 
             List<List<string>> resultadoBusca = EncontarSimilares(gPath);
             foreach (List<string> iGrupo in resultadoBusca)
             {
                 contador++;
                 List<string> listaDoGrupo = new List<string>();
-                tabela.Rows.Add($"Grupo {contador}:");
+                tabelaPrincipal.Rows.Add($"Imagem {contador}:");
                 foreach (string iPath in iGrupo)
                 {
-                    tabela.Rows.Add(iPath);
+                    if (!primeiraImagem)
+                    {
+                        listaDeletaveis.Add(iPath);
+                    }
+                    else
+                    {
+                        primeiraImagem = false;
+                    }
+                    tabelaPrincipal.Rows.Add(iPath);
                     listaDoGrupo.Add(RecuperaDiretorioEnsaio(iPath));
                 }
                 AdicionarOuAgrupar(listaDoGrupo);
             }
-            grdMain.DataSource = tabela;
+            grdMain.DataSource = tabelaPrincipal;
             MostrarGrupos();
             Cursor = Cursors.Default;
 
-            if (tabela.Rows.Count == 0)
+            if (tabelaPrincipal.Rows.Count == 0)
             {
                 MessageBox.Show("Nenhuma imagem similar encontrada.");
             }
@@ -285,10 +280,18 @@ namespace ImagensRepetidas
             Escanear();
         }
 
-
-
-
-
-
+        private void btDeletarRepetidos_Click(object sender, EventArgs e)
+        {
+            //Confirmar com usuário sobre apagar todos as imagens repetidas
+            DialogResult confirmacao = MessageBox.Show("Deletar todas as imagens repetidas", "ATENÇÃO", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if(confirmacao == DialogResult.Yes)
+            {
+                foreach(string iImagem in listaDeletaveis)
+                {
+                    File.Delete(iImagem);
+                }
+                MessageBox.Show("Todas as imagens repetidas foram deletadas.","Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+        }
     }
 }

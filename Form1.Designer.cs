@@ -37,9 +37,9 @@
             Imagem = new DataGridViewTextBoxColumn();
             picPreview = new PictureBox();
             btDeletar = new Button();
-            chkAutorizarDelete = new CheckBox();
             lstGrupos = new ListBox();
             btReagrupar = new Button();
+            btDeletarRepetidos = new Button();
             ((System.ComponentModel.ISupportInitialize)grdMain).BeginInit();
             ((System.ComponentModel.ISupportInitialize)picPreview).BeginInit();
             SuspendLayout();
@@ -117,16 +117,6 @@
             btDeletar.UseVisualStyleBackColor = true;
             btDeletar.Click += btDeletar_Click;
             // 
-            // chkAutorizarDelete
-            // 
-            chkAutorizarDelete.AutoSize = true;
-            chkAutorizarDelete.Location = new Point(1127, 34);
-            chkAutorizarDelete.Name = "chkAutorizarDelete";
-            chkAutorizarDelete.Size = new Size(125, 19);
-            chkAutorizarDelete.TabIndex = 7;
-            chkAutorizarDelete.Text = "Autorização Delete";
-            chkAutorizarDelete.UseVisualStyleBackColor = true;
-            // 
             // lstGrupos
             // 
             lstGrupos.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
@@ -134,13 +124,13 @@
             lstGrupos.FormattingEnabled = true;
             lstGrupos.Location = new Point(34, 59);
             lstGrupos.Name = "lstGrupos";
-            lstGrupos.Size = new Size(242, 544);
+            lstGrupos.Size = new Size(242, 504);
             lstGrupos.TabIndex = 8;
             // 
             // btReagrupar
             // 
             btReagrupar.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            btReagrupar.Location = new Point(34, 618);
+            btReagrupar.Location = new Point(34, 579);
             btReagrupar.Name = "btReagrupar";
             btReagrupar.Size = new Size(242, 23);
             btReagrupar.TabIndex = 9;
@@ -148,14 +138,25 @@
             btReagrupar.UseVisualStyleBackColor = true;
             btReagrupar.Click += btReagrupar_Click;
             // 
+            // btDeletarRepetidos
+            // 
+            btDeletarRepetidos.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            btDeletarRepetidos.Location = new Point(34, 618);
+            btDeletarRepetidos.Name = "btDeletarRepetidos";
+            btDeletarRepetidos.Size = new Size(242, 23);
+            btDeletarRepetidos.TabIndex = 10;
+            btDeletarRepetidos.Text = "Deletar Repetidos";
+            btDeletarRepetidos.UseVisualStyleBackColor = true;
+            btDeletarRepetidos.Click += btDeletarRepetidos_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1264, 729);
+            Controls.Add(btDeletarRepetidos);
             Controls.Add(btReagrupar);
             Controls.Add(lstGrupos);
-            Controls.Add(chkAutorizarDelete);
             Controls.Add(btDeletar);
             Controls.Add(picPreview);
             Controls.Add(grdMain);
@@ -182,8 +183,8 @@
         private DataGridViewTextBoxColumn Imagem;
         private PictureBox picPreview;
         private Button btDeletar;
-        private CheckBox chkAutorizarDelete;
         private ListBox lstGrupos;
         private Button btReagrupar;
+        private Button btDeletarRepetidos;
     }
 }
