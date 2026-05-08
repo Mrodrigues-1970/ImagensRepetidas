@@ -35,10 +35,11 @@
             btIniciar = new Button();
             grdMain = new DataGridView();
             Imagem = new DataGridViewTextBoxColumn();
-            btExplorer = new Button();
             picPreview = new PictureBox();
             btDeletar = new Button();
             chkAutorizarDelete = new CheckBox();
+            lstGrupos = new ListBox();
+            btReagrupar = new Button();
             ((System.ComponentModel.ISupportInitialize)grdMain).BeginInit();
             ((System.ComponentModel.ISupportInitialize)picPreview).BeginInit();
             SuspendLayout();
@@ -56,7 +57,7 @@
             // btProcurarPath
             // 
             btProcurarPath.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btProcurarPath.Location = new Point(733, 28);
+            btProcurarPath.Location = new Point(840, 28);
             btProcurarPath.Name = "btProcurarPath";
             btProcurarPath.Size = new Size(75, 23);
             btProcurarPath.TabIndex = 1;
@@ -67,7 +68,7 @@
             // btIniciar
             // 
             btIniciar.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btIniciar.Location = new Point(821, 28);
+            btIniciar.Location = new Point(932, 28);
             btIniciar.Name = "btIniciar";
             btIniciar.Size = new Size(75, 23);
             btIniciar.TabIndex = 2;
@@ -77,13 +78,13 @@
             // 
             // grdMain
             // 
-            grdMain.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            grdMain.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             grdMain.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             grdMain.Columns.AddRange(new DataGridViewColumn[] { Imagem });
-            grdMain.Location = new Point(34, 108);
+            grdMain.Location = new Point(292, 59);
             grdMain.Name = "grdMain";
             grdMain.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            grdMain.Size = new Size(574, 501);
+            grdMain.Size = new Size(542, 582);
             grdMain.TabIndex = 3;
             grdMain.DoubleClick += grdMain_DoubleClick;
             // 
@@ -94,24 +95,13 @@
             Imagem.Name = "Imagem";
             Imagem.Width = 500;
             // 
-            // btExplorer
-            // 
-            btExplorer.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btExplorer.Location = new Point(906, 31);
-            btExplorer.Name = "btExplorer";
-            btExplorer.Size = new Size(75, 23);
-            btExplorer.TabIndex = 4;
-            btExplorer.Text = "Explorer";
-            btExplorer.UseVisualStyleBackColor = true;
-            btExplorer.Click += btExplorer_Click;
-            // 
             // picPreview
             // 
             picPreview.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             picPreview.BorderStyle = BorderStyle.FixedSingle;
-            picPreview.Location = new Point(659, 108);
+            picPreview.Location = new Point(840, 59);
             picPreview.Name = "picPreview";
-            picPreview.Size = new Size(412, 501);
+            picPreview.Size = new Size(412, 582);
             picPreview.TabIndex = 5;
             picPreview.TabStop = false;
             picPreview.DoubleClick += picPreview_DoubleClick;
@@ -119,7 +109,7 @@
             // btDeletar
             // 
             btDeletar.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btDeletar.Location = new Point(996, 31);
+            btDeletar.Location = new Point(1025, 28);
             btDeletar.Name = "btDeletar";
             btDeletar.Size = new Size(75, 23);
             btDeletar.TabIndex = 6;
@@ -130,22 +120,44 @@
             // chkAutorizarDelete
             // 
             chkAutorizarDelete.AutoSize = true;
-            chkAutorizarDelete.Location = new Point(953, 74);
+            chkAutorizarDelete.Location = new Point(1127, 34);
             chkAutorizarDelete.Name = "chkAutorizarDelete";
             chkAutorizarDelete.Size = new Size(125, 19);
             chkAutorizarDelete.TabIndex = 7;
             chkAutorizarDelete.Text = "Autorização Delete";
             chkAutorizarDelete.UseVisualStyleBackColor = true;
             // 
+            // lstGrupos
+            // 
+            lstGrupos.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            lstGrupos.Font = new Font("Segoe UI", 11F);
+            lstGrupos.FormattingEnabled = true;
+            lstGrupos.Location = new Point(34, 59);
+            lstGrupos.Name = "lstGrupos";
+            lstGrupos.Size = new Size(242, 544);
+            lstGrupos.TabIndex = 8;
+            // 
+            // btReagrupar
+            // 
+            btReagrupar.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            btReagrupar.Location = new Point(34, 618);
+            btReagrupar.Name = "btReagrupar";
+            btReagrupar.Size = new Size(242, 23);
+            btReagrupar.TabIndex = 9;
+            btReagrupar.Text = "Reagrupar";
+            btReagrupar.UseVisualStyleBackColor = true;
+            btReagrupar.Click += btReagrupar_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1108, 697);
+            ClientSize = new Size(1264, 729);
+            Controls.Add(btReagrupar);
+            Controls.Add(lstGrupos);
             Controls.Add(chkAutorizarDelete);
             Controls.Add(btDeletar);
             Controls.Add(picPreview);
-            Controls.Add(btExplorer);
             Controls.Add(grdMain);
             Controls.Add(btIniciar);
             Controls.Add(btProcurarPath);
@@ -167,10 +179,11 @@
         private Button btProcurarPath;
         private Button btIniciar;
         private DataGridView grdMain;
-        private Button btExplorer;
         private DataGridViewTextBoxColumn Imagem;
         private PictureBox picPreview;
         private Button btDeletar;
         private CheckBox chkAutorizarDelete;
+        private ListBox lstGrupos;
+        private Button btReagrupar;
     }
 }

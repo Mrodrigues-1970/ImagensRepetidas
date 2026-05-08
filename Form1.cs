@@ -11,7 +11,7 @@ namespace ImagensRepetidas
     public partial class Form1 : Form
     {
         string gPath = string.Empty;
-
+        List<List<string>> listasInternasRepetidos;
 
         public Form1()
         {
@@ -25,7 +25,7 @@ namespace ImagensRepetidas
             //Busca o caminho da pasta onde estão as imagens
             using (FolderBrowserDialog fbd = new FolderBrowserDialog())
             {
-                if(!Path.Exists(fbd.InitialDirectory))
+                if (!Path.Exists(fbd.InitialDirectory))
                 {
                     fbd.InitialDirectory = "D:\\";
                 }
@@ -102,39 +102,7 @@ namespace ImagensRepetidas
 
         private void btIniciar_Click(object sender, EventArgs e)
         {
-            Cursor = Cursors.WaitCursor;
-            int contador = 0;
-
-            DataTable tabela = new DataTable();
-            tabela.Columns.Add("Imagem", typeof(string));
-
-            List<List<string>> resultadoBusca = EncontarSimilares(gPath);
-            foreach (List<string> iGrupo in resultadoBusca)
-            {
-                contador++;
-                tabela.Rows.Add($"Grupo {contador}:");
-                foreach (string iPath in iGrupo)
-                {
-                    tabela.Rows.Add(iPath);
-                }
-            }
-            grdMain.DataSource = tabela;
-            Cursor = Cursors.Default;
-
-            if (tabela.Rows.Count == 0)
-            {
-                MessageBox.Show("Nenhuma imagem similar encontrada.");
-            }
-
-        }
-
-        private void btExplorer_Click(object sender, EventArgs e)
-        {
-            //abre uma instância do windows explorer na pasta selecionada
-            if (!string.IsNullOrEmpty(gPath) && Directory.Exists(gPath))
-            {
-                System.Diagnostics.Process.Start("explorer.exe", gPath);
-            }
+            Escanear();
         }
 
         private void picPreview_DoubleClick(object sender, EventArgs e)
@@ -145,7 +113,8 @@ namespace ImagensRepetidas
         private void btDeletar_Click(object sender, EventArgs e)
         {
             DialogResult result = DialogResult.Yes;
-            if (!chkAutorizarDelete.Checked) {
+            if (!chkAutorizarDelete.Checked)
+            {
                 //Pede confirmação para deletar a imagem selecionada
                 result = MessageBox.Show("Tem certeza que deseja deletar a imagem selecionada?", "Confirmação", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             }
@@ -193,5 +162,133 @@ namespace ImagensRepetidas
                 }
             }
         }
+
+        private string RecuperaDiretorioEnsaio(string fullPath)
+        {
+            int indiceSeparador = fullPath.LastIndexOf("\\");
+            string somentePath = fullPath.Substring(0, indiceSeparador);
+            indiceSeparador = somentePath.LastIndexOf("\\");
+            string diretorio = somentePath.Substring(indiceSeparador + 1);
+            return diretorio;
+        }
+
+        public void AdicionarOuAgrupar(List<string> parametros)
+        {
+            if (parametros == null || parametros.Count == 0)
+                return;
+
+            // Verifica se algum elemento já existe em alguma lista interna
+            var listaEncontrada = listasInternasRepetidos.FirstOrDefault(
+                interna => interna.Any(item => parametros.Contains(item))
+            );
+
+            if (listaEncontrada != null)
+            {
+                // Adiciona todos os elementos do parâmetro à lista encontrada
+                foreach (var elemento in parametros)
+                {
+                    if (!listaEncontrada.Contains(elemento))
+                    {
+                        listaEncontrada.Add(elemento);
+                    }
+                }
+            }
+            else
+            {
+                // Cria uma nova lista com todos os elementos
+                listasInternasRepetidos.Add(new List<string>(parametros));
+            }
+        }
+
+        private List<string> AgruparElementosListas()
+        {
+            List<string> resultado = new List<string>();
+            foreach (List<string> iItem in listasInternasRepetidos)
+            {
+                string grupo = string.Empty;
+                foreach (string iFolder in iItem)
+                {
+                    grupo += iFolder + " - ";
+                }
+                resultado.AddRange(grupo);
+            }
+            return resultado;
+        }
+
+        private void MostrarGrupos()
+        {
+            List<string> grupos = AgruparElementosListas();
+            lstGrupos.DataSource = grupos;
+        }
+
+
+        private void Escanear()
+        {
+            Cursor = Cursors.WaitCursor;
+            listasInternasRepetidos = new List<List<string>>();
+            int contador = 0;
+
+            DataTable tabela = new DataTable();
+            tabela.Columns.Add("Imagem", typeof(string));
+
+            List<List<string>> resultadoBusca = EncontarSimilares(gPath);
+            foreach (List<string> iGrupo in resultadoBusca)
+            {
+                contador++;
+                List<string> listaDoGrupo = new List<string>();
+                tabela.Rows.Add($"Grupo {contador}:");
+                foreach (string iPath in iGrupo)
+                {
+                    tabela.Rows.Add(iPath);
+                    listaDoGrupo.Add(RecuperaDiretorioEnsaio(iPath));
+                }
+                AdicionarOuAgrupar(listaDoGrupo);
+            }
+            grdMain.DataSource = tabela;
+            MostrarGrupos();
+            Cursor = Cursors.Default;
+
+            if (tabela.Rows.Count == 0)
+            {
+                MessageBox.Show("Nenhuma imagem similar encontrada.");
+            }
+        }
+
+        private void btReagrupar_Click(object sender, EventArgs e)
+        {
+            //mover os arquivos dos diretórios agrupados para o primeiro diretório do grupo
+            foreach (List<string> iGrupo in listasInternasRepetidos)
+            {
+                if (iGrupo.Count > 1)
+                {
+                    string destino = Path.Combine(gPath, iGrupo[0]);
+                    for (int i = 1; i < iGrupo.Count; i++)
+                    {
+                        string origem = Path.Combine(gPath, iGrupo[i]);
+                        try
+                        {
+                            //move todos os arquivos do diretório de origem para o diretório de destino
+                            foreach (string file in Directory.GetFiles(origem))
+                            {
+                                string fileName = Path.GetFileName(file);
+                                string destFile = Path.Combine(destino, fileName);
+                                File.Move(file, destFile);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show($"Erro ao mover o arquivo: {ex.Message}");
+                        }
+                    }
+                }
+            }
+            Escanear();
+        }
+
+
+
+
+
+
     }
 }
