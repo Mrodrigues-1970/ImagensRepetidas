@@ -22,7 +22,7 @@ namespace ImagensRepetidas
 
         private void btProcurarPath_Click(object sender, EventArgs e)
         {
-
+            grdMain.DataSource = null;
 
             //Busca o caminho da pasta onde estão as imagens
             using (FolderBrowserDialog fbd = new FolderBrowserDialog())
@@ -212,8 +212,7 @@ namespace ImagensRepetidas
         {
             Cursor = Cursors.WaitCursor;
             listasInternasRepetidos = new List<List<string>>();
-            int contador = 0;
-            bool primeiraImagem = true;
+            int contador = 0;            
 
             tabelaPrincipal = new DataTable();
             tabelaPrincipal.Columns.Add("Imagem", typeof(string));
@@ -222,6 +221,7 @@ namespace ImagensRepetidas
             foreach (List<string> iGrupo in resultadoBusca)
             {
                 contador++;
+                bool primeiraImagem = true;
                 List<string> listaDoGrupo = new List<string>();
                 tabelaPrincipal.Rows.Add($"Imagem {contador}:");
                 foreach (string iPath in iGrupo)
@@ -251,6 +251,7 @@ namespace ImagensRepetidas
 
         private void btReagrupar_Click(object sender, EventArgs e)
         {
+            Cursor = Cursors.WaitCursor;
             //mover os arquivos dos diretórios agrupados para o primeiro diretório do grupo
             foreach (List<string> iGrupo in listasInternasRepetidos)
             {
@@ -290,7 +291,7 @@ namespace ImagensRepetidas
                 {
                     File.Delete(iImagem);
                 }
-                MessageBox.Show("Todas as imagens repetidas foram deletadas.","Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show("Todas as " + listaDeletaveis.Count().ToString() + " imagens repetidas foram deletadas.","Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
         }
     }
