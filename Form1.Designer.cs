@@ -83,6 +83,7 @@
             grdMain.Columns.AddRange(new DataGridViewColumn[] { Imagem });
             grdMain.Location = new Point(292, 59);
             grdMain.Name = "grdMain";
+            grdMain.RowHeadersVisible = false;
             grdMain.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             grdMain.Size = new Size(542, 582);
             grdMain.TabIndex = 3;
