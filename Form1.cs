@@ -13,7 +13,7 @@ namespace ImagensRepetidas
         string gPath = string.Empty;
         List<List<string>> listasInternasRepetidos;
         DataTable tabelaPrincipal;
-        List<string> listaDeletaveis = new List<string>();
+        List<string> listaDeletaveis;
 
         public Form1()
         {
@@ -212,8 +212,8 @@ namespace ImagensRepetidas
         {
             Cursor = Cursors.WaitCursor;
             listasInternasRepetidos = new List<List<string>>();
-            int contador = 0;            
-
+            int contador = 0;
+            listaDeletaveis = new List<string>();
             tabelaPrincipal = new DataTable();
             tabelaPrincipal.Columns.Add("Imagem", typeof(string));
 
@@ -241,6 +241,7 @@ namespace ImagensRepetidas
             }
             grdMain.DataSource = tabelaPrincipal;
             MostrarGrupos();
+            btDeletarRepetidos.Text = "Deletar " + listaDeletaveis.Count().ToString() + " Imagens Repetidas";
             Cursor = Cursors.Default;
 
             if (tabelaPrincipal.Rows.Count == 0)
