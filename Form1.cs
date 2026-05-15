@@ -20,6 +20,9 @@ namespace ImagensRepetidas
             InitializeComponent();
         }
 
+
+        #region Botoes
+
         private void btProcurarPath_Click(object sender, EventArgs e)
         {
             grdMain.DataSource = null;
@@ -39,6 +42,94 @@ namespace ImagensRepetidas
                 }
             }
         }
+
+        private void btIniciar_Click(object sender, EventArgs e)
+        {
+            Escanear();
+        }
+
+        private void btDeletar_Click(object sender, EventArgs e)
+        {
+            foreach (DataGridViewRow iRow in grdMain.SelectedRows)
+            {
+                string selectedPath = iRow.Cells[0].Value.ToString();
+                try
+                {
+                    //libera o arquivo que está sendo exibido no picturebox para permitir a exclusão
+                    picPreview.Image = null;
+
+                    File.Delete(selectedPath);
+                    //MessageBox.Show("Imagem deletada com sucesso.");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Erro ao deletar a imagem: {ex.Message}");
+                }
+            }
+        }
+
+        private void btReagrupar_Click(object sender, EventArgs e)
+        {
+            Cursor = Cursors.WaitCursor;
+            //mover os arquivos dos diretórios agrupados para o primeiro diretório do grupo
+            foreach (List<string> iGrupo in listasInternasRepetidos)
+            {
+                if (iGrupo.Count > 1)
+                {
+                    string destino = Path.Combine(gPath, iGrupo[0]);
+                    for (int i = 1; i < iGrupo.Count; i++)
+                    {
+                        string origem = Path.Combine(gPath, iGrupo[i]);
+                        try
+                        {
+                            //move todos os arquivos do diretório de origem para o diretório de destino
+                            foreach (string file in Directory.GetFiles(origem))
+                            {
+                                string fileName = Path.GetFileName(file);
+                                string destFile = Path.Combine(destino, fileName);
+                                //se existir um arquivo com o mesmo nome no destino, adiciona um sufixo para evitar sobrescrever
+                                if (File.Exists(destFile))
+                                {
+                                    string fileNameWithoutExt = Path.GetFileNameWithoutExtension(fileName);
+                                    string ext = Path.GetExtension(fileName);
+                                    destFile = Path.Combine(destino, $"{fileNameWithoutExt}_{iGrupo[i]}{ext}");
+                                }
+                                File.Move(file, destFile);
+                            }
+
+                            //deleta o diretório de origem após mover os arquivos
+                            Directory.Delete(origem);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show($"Erro ao mover o arquivo: {ex.Message}");
+                        }
+                    }
+                }
+            }
+            Escanear();
+        }
+
+        private void btDeletarRepetidos_Click(object sender, EventArgs e)
+        {
+            //Confirmar com usuário sobre apagar todos as imagens repetidas
+            DialogResult confirmacao = MessageBox.Show("Deletar todas as imagens repetidas", "ATENÇÃO", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (confirmacao == DialogResult.Yes)
+            {
+                foreach (string iImagem in listaDeletaveis)
+                {
+                    File.Delete(iImagem);
+                }
+                MessageBox.Show("Todas as " + listaDeletaveis.Count().ToString() + " imagens repetidas foram deletadas.", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+        }
+
+        #endregion
+
+
+
+
+
 
         static List<List<string>> EncontarSimilares(string path)
         {
@@ -101,34 +192,9 @@ namespace ImagensRepetidas
             }
         }
 
-        private void btIniciar_Click(object sender, EventArgs e)
-        {
-            Escanear();
-        }
-
         private void picPreview_DoubleClick(object sender, EventArgs e)
         {
             picPreview.Image = null;
-        }
-
-        private void btDeletar_Click(object sender, EventArgs e)
-        {
-            foreach (DataGridViewRow iRow in grdMain.SelectedRows)
-            {
-                string selectedPath = iRow.Cells[0].Value.ToString();
-                try
-                {
-                    //libera o arquivo que está sendo exibido no picturebox para permitir a exclusão
-                    picPreview.Image = null;
-
-                    File.Delete(selectedPath);
-                    //MessageBox.Show("Imagem deletada com sucesso.");
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Erro ao deletar a imagem: {ex.Message}");
-                }
-            }
         }
 
         private void grdMain_DoubleClick(object sender, EventArgs e)
@@ -250,50 +316,8 @@ namespace ImagensRepetidas
             }
         }
 
-        private void btReagrupar_Click(object sender, EventArgs e)
-        {
-            Cursor = Cursors.WaitCursor;
-            //mover os arquivos dos diretórios agrupados para o primeiro diretório do grupo
-            foreach (List<string> iGrupo in listasInternasRepetidos)
-            {
-                if (iGrupo.Count > 1)
-                {
-                    string destino = Path.Combine(gPath, iGrupo[0]);
-                    for (int i = 1; i < iGrupo.Count; i++)
-                    {
-                        string origem = Path.Combine(gPath, iGrupo[i]);
-                        try
-                        {
-                            //move todos os arquivos do diretório de origem para o diretório de destino
-                            foreach (string file in Directory.GetFiles(origem))
-                            {
-                                string fileName = Path.GetFileName(file);
-                                string destFile = Path.Combine(destino, fileName);
-                                File.Move(file, destFile);
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            MessageBox.Show($"Erro ao mover o arquivo: {ex.Message}");
-                        }
-                    }
-                }
-            }
-            Escanear();
-        }
 
-        private void btDeletarRepetidos_Click(object sender, EventArgs e)
-        {
-            //Confirmar com usuário sobre apagar todos as imagens repetidas
-            DialogResult confirmacao = MessageBox.Show("Deletar todas as imagens repetidas", "ATENÇÃO", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            if(confirmacao == DialogResult.Yes)
-            {
-                foreach(string iImagem in listaDeletaveis)
-                {
-                    File.Delete(iImagem);
-                }
-                MessageBox.Show("Todas as " + listaDeletaveis.Count().ToString() + " imagens repetidas foram deletadas.","Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-            }
-        }
+
+
     }
 }

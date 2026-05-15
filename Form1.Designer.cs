@@ -48,7 +48,7 @@
             // 
             lblPath.AutoSize = true;
             lblPath.Font = new Font("Segoe UI", 11F);
-            lblPath.Location = new Point(34, 31);
+            lblPath.Location = new Point(12, 28);
             lblPath.Name = "lblPath";
             lblPath.Size = new Size(27, 20);
             lblPath.TabIndex = 0;
@@ -123,17 +123,18 @@
             lstGrupos.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             lstGrupos.Font = new Font("Segoe UI", 11F);
             lstGrupos.FormattingEnabled = true;
-            lstGrupos.Location = new Point(34, 59);
+            lstGrupos.HorizontalScrollbar = true;
+            lstGrupos.Location = new Point(12, 59);
             lstGrupos.Name = "lstGrupos";
-            lstGrupos.Size = new Size(242, 504);
+            lstGrupos.Size = new Size(264, 504);
             lstGrupos.TabIndex = 8;
             // 
             // btReagrupar
             // 
             btReagrupar.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            btReagrupar.Location = new Point(34, 579);
+            btReagrupar.Location = new Point(12, 579);
             btReagrupar.Name = "btReagrupar";
-            btReagrupar.Size = new Size(242, 23);
+            btReagrupar.Size = new Size(264, 23);
             btReagrupar.TabIndex = 9;
             btReagrupar.Text = "Reagrupar";
             btReagrupar.UseVisualStyleBackColor = true;
@@ -142,9 +143,9 @@
             // btDeletarRepetidos
             // 
             btDeletarRepetidos.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            btDeletarRepetidos.Location = new Point(34, 618);
+            btDeletarRepetidos.Location = new Point(12, 618);
             btDeletarRepetidos.Name = "btDeletarRepetidos";
-            btDeletarRepetidos.Size = new Size(242, 23);
+            btDeletarRepetidos.Size = new Size(264, 23);
             btDeletarRepetidos.TabIndex = 10;
             btDeletarRepetidos.Text = "Deletar Repetidos";
             btDeletarRepetidos.UseVisualStyleBackColor = true;
