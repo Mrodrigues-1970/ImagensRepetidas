@@ -1,9 +1,6 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
-using SixLabors.ImageSharp.Processing;
 using System.Data;
 
 namespace ImagensRepetidas
@@ -26,7 +23,94 @@ namespace ImagensRepetidas
         private void btProcurarPath_Click(object sender, EventArgs e)
         {
             grdMain.DataSource = null;
+            SelecionarPath();
+        }
 
+        private void btIniciar_Click(object sender, EventArgs e)
+        {
+            Escanear();
+        }
+
+        private void btDeletar_Click(object sender, EventArgs e)
+        {
+            DeletarArquivo();
+        }
+
+        private void btReagrupar_Click(object sender, EventArgs e)
+        {
+            Cursor = Cursors.WaitCursor;
+            //mover os arquivos dos diretórios agrupados para o primeiro diretório do grupo
+            foreach (List<string> iGrupo in listasInternasRepetidos)
+            {
+                bool deletarDiretorio = false;
+                if (iGrupo.Count > 1)
+                {
+                    string destino = Path.Combine(gPath, iGrupo[0]);
+                    for (int i = 1; i < iGrupo.Count; i++)
+                    {
+                        string origem = Path.Combine(gPath, iGrupo[i]);
+                        try
+                        {
+                            //Se o diretório de origem for diferente do diretório de destino, marca para deletar o diretório de origem após mover os arquivos
+                            deletarDiretorio = iGrupo[0] != iGrupo[i];
+                            //move todos os arquivos do diretório de origem para o diretório de destino
+                            foreach (string file in Directory.GetFiles(origem))
+                            {
+                                string fileName = Path.GetFileName(file);
+                                string destFile = Path.Combine(destino, fileName);
+                                //se existir um arquivo com o mesmo nome no destino, adiciona um sufixo para evitar sobrescrever
+                                if (File.Exists(destFile))
+                                {
+                                    string fileNameWithoutExt = Path.GetFileNameWithoutExtension(fileName);
+                                    string ext = Path.GetExtension(fileName);
+                                    destFile = Path.Combine(destino, $"{fileNameWithoutExt}_{iGrupo[i]}{ext}");
+                                }
+                                File.Move(file, destFile);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show($"Erro ao mover o arquivo: {ex.Message}");
+                        }
+
+                        try {
+                            if (deletarDiretorio)
+                            {
+                                //deleta o diretório de origem após mover os arquivos
+                                Directory.Delete(origem);
+                            }
+                        }
+                        catch ( Exception ex)
+                        {
+                            MessageBox.Show($"Erro ao deletar o diretório: {ex.Message}");
+                        }
+                    }
+                }
+            }
+            Escanear();
+        }
+
+        private void btDeletarRepetidos_Click(object sender, EventArgs e)
+        {
+            //Confirmar com usuário sobre apagar todos as imagens repetidas
+            DialogResult confirmacao = MessageBox.Show("Deletar todas as " + listaDeletaveis.Count().ToString() + " imagens repetidas?", "ATENÇÃO", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (confirmacao == DialogResult.Yes)
+            {
+                foreach (string iImagem in listaDeletaveis)
+                {
+                    File.Delete(iImagem);
+                }
+                MessageBox.Show("Todas as " + listaDeletaveis.Count().ToString() + " imagens repetidas foram deletadas.", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+        }
+
+        #endregion
+
+
+        #region IO
+
+        private void SelecionarPath()
+        {
             //Busca o caminho da pasta onde estão as imagens
             using (FolderBrowserDialog fbd = new FolderBrowserDialog())
             {
@@ -43,13 +127,16 @@ namespace ImagensRepetidas
             }
         }
 
-        private void btIniciar_Click(object sender, EventArgs e)
+        private string RecuperaDiretorioEnsaio(string fullPath)
         {
-            Escanear();
+            int indiceSeparador = fullPath.LastIndexOf("\\");
+            string somentePath = fullPath.Substring(0, indiceSeparador);
+            indiceSeparador = somentePath.LastIndexOf("\\");
+            string diretorio = somentePath.Substring(indiceSeparador + 1);
+            return diretorio;
         }
 
-        private void btDeletar_Click(object sender, EventArgs e)
-        {
+        private void DeletarArquivo() {
             foreach (DataGridViewRow iRow in grdMain.SelectedRows)
             {
                 string selectedPath = iRow.Cells[0].Value.ToString();
@@ -68,129 +155,69 @@ namespace ImagensRepetidas
             }
         }
 
-        private void btReagrupar_Click(object sender, EventArgs e)
-        {
-            Cursor = Cursors.WaitCursor;
-            //mover os arquivos dos diretórios agrupados para o primeiro diretório do grupo
-            foreach (List<string> iGrupo in listasInternasRepetidos)
-            {
-                if (iGrupo.Count > 1)
-                {
-                    string destino = Path.Combine(gPath, iGrupo[0]);
-                    for (int i = 1; i < iGrupo.Count; i++)
-                    {
-                        string origem = Path.Combine(gPath, iGrupo[i]);
-                        try
-                        {
-                            //move todos os arquivos do diretório de origem para o diretório de destino
-                            foreach (string file in Directory.GetFiles(origem))
-                            {
-                                string fileName = Path.GetFileName(file);
-                                string destFile = Path.Combine(destino, fileName);
-                                //se existir um arquivo com o mesmo nome no destino, adiciona um sufixo para evitar sobrescrever
-                                if (File.Exists(destFile))
-                                {
-                                    string fileNameWithoutExt = Path.GetFileNameWithoutExtension(fileName);
-                                    string ext = Path.GetExtension(fileName);
-                                    destFile = Path.Combine(destino, $"{fileNameWithoutExt}_{iGrupo[i]}{ext}");
-                                }
-                                File.Move(file, destFile);
-                            }
-
-                            //deleta o diretório de origem após mover os arquivos
-                            Directory.Delete(origem);
-                        }
-                        catch (Exception ex)
-                        {
-                            MessageBox.Show($"Erro ao mover o arquivo: {ex.Message}");
-                        }
-                    }
-                }
-            }
-            Escanear();
-        }
-
-        private void btDeletarRepetidos_Click(object sender, EventArgs e)
-        {
-            //Confirmar com usuário sobre apagar todos as imagens repetidas
-            DialogResult confirmacao = MessageBox.Show("Deletar todas as imagens repetidas", "ATENÇÃO", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            if (confirmacao == DialogResult.Yes)
-            {
-                foreach (string iImagem in listaDeletaveis)
-                {
-                    File.Delete(iImagem);
-                }
-                MessageBox.Show("Todas as " + listaDeletaveis.Count().ToString() + " imagens repetidas foram deletadas.", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-            }
-        }
-
         #endregion
-
-
-
 
 
 
         static List<List<string>> EncontarSimilares(string path)
         {
-            var hashDict = new Dictionary<string, List<string>>();
-            var files = Directory.GetFiles(path, "*.jpg", SearchOption.AllDirectories);
+            var DicionarioHash = new Dictionary<string, List<string>>();
+            var listaArquivos = Directory.GetFiles(path, "*.jpg", SearchOption.AllDirectories);
 
-            foreach (var file in files)
+            foreach (var iArquivo in listaArquivos)
             {
-                string hash = RetornaHashMedio(file);
-                if (!hashDict.ContainsKey(hash))
+                string hash = ProcessamentoImagem.RetornaHashMedio(iArquivo);
+                if (!DicionarioHash.ContainsKey(hash))
                 {
-                    hashDict[hash] = new List<string>();
+                    DicionarioHash[hash] = new List<string>();
                 }
-                hashDict[hash].Add(file);
+                DicionarioHash[hash].Add(iArquivo);
             }
 
-            var duplicates = new List<List<string>>();
-            foreach (var entry in hashDict)
+            var listaDuplicados = new List<List<string>>();
+            foreach (var iItem in DicionarioHash)
             {
-                if (entry.Value.Count > 1)
+                if (iItem.Value.Count > 1)
                 {
-                    duplicates.Add(entry.Value);
+                    listaDuplicados.Add(iItem.Value);
                 }
             }
-
-            return duplicates;
+            return listaDuplicados;
         }
 
-        static string RetornaHashMedio(string filePath)
-        {
-            using (var image = SixLabors.ImageSharp.Image.Load<Rgba32>(filePath))
-            {
-                // Reduz para 8x8 em tons de cinza
-                image.Mutate(x => x.Resize(8, 8).Grayscale());
+        //static string RetornaHashMedio(string filePath)
+        //{
+        //    using (var image = SixLabors.ImageSharp.Image.Load<Rgba32>(filePath))
+        //    {
+        //        // Reduz para 8x8 em tons de cinza
+        //        image.Mutate(x => x.Resize(8, 8).Grayscale());
 
-                double total = 0;
-                double[] pixels = new double[64];
-                int i = 0;
+        //        double total = 0;
+        //        double[] pixels = new double[64];
+        //        int i = 0;
 
-                for (int y = 0; y < 8; y++)
-                {
-                    for (int x = 0; x < 8; x++)
-                    {
-                        var pixel = image[x, y];
-                        double value = pixel.R; // já está em grayscale
-                        pixels[i++] = value;
-                        total += value;
-                    }
-                }
+        //        for (int y = 0; y < 8; y++)
+        //        {
+        //            for (int x = 0; x < 8; x++)
+        //            {
+        //                var pixel = image[x, y];
+        //                double value = pixel.R; // já está em grayscale
+        //                pixels[i++] = value;
+        //                total += value;
+        //            }
+        //        }
 
-                double avg = total / 64.0;
-                char[] bits = new char[64];
+        //        double avg = total / 64.0;
+        //        char[] bits = new char[64];
 
-                for (int j = 0; j < 64; j++)
-                {
-                    bits[j] = pixels[j] >= avg ? '1' : '0';
-                }
+        //        for (int j = 0; j < 64; j++)
+        //        {
+        //            bits[j] = pixels[j] >= avg ? '1' : '0';
+        //        }
 
-                return new string(bits);
-            }
-        }
+        //        return new string(bits);
+        //    }
+        //}
 
         private void picPreview_DoubleClick(object sender, EventArgs e)
         {
@@ -214,15 +241,6 @@ namespace ImagensRepetidas
                     MessageBox.Show($"Erro ao carregar a imagem: {ex.Message}");
                 }
             }
-        }
-
-        private string RecuperaDiretorioEnsaio(string fullPath)
-        {
-            int indiceSeparador = fullPath.LastIndexOf("\\");
-            string somentePath = fullPath.Substring(0, indiceSeparador);
-            indiceSeparador = somentePath.LastIndexOf("\\");
-            string diretorio = somentePath.Substring(indiceSeparador + 1);
-            return diretorio;
         }
 
         public void AdicionarOuAgrupar(List<string> parametros)
