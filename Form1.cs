@@ -22,7 +22,7 @@ namespace ImagensRepetidas
 
         private void btProcurarPath_Click(object sender, EventArgs e)
         {
-            grdMain.DataSource = null;
+            LimparControles();
             SelecionarPath();
         }
 
@@ -334,7 +334,24 @@ namespace ImagensRepetidas
             }
         }
 
-
+        private void LimparControles()
+        {
+            grdMain.DataSource = null;
+            lstGrupos.DataSource = null;
+            picPreview.Image = null;
+            if(tabelaPrincipal != null)
+            {
+                tabelaPrincipal.Clear();
+            }
+            if (listasInternasRepetidos != null)
+            {
+                listasInternasRepetidos.Clear();
+            }                
+            if(listaDeletaveis != null)
+            {
+                listaDeletaveis.Clear();
+            }
+        }
 
 
     }
