@@ -88,6 +88,7 @@ namespace ImagensRepetidas
                 }
             }
             Escanear();
+            btReagrupar.Enabled = false;
         }
 
         private void btDeletarRepetidos_Click(object sender, EventArgs e)
@@ -102,6 +103,7 @@ namespace ImagensRepetidas
                 }
                 MessageBox.Show("Todas as " + listaDeletaveis.Count().ToString() + " imagens repetidas foram deletadas.", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
+            LimparControles();
         }
 
         #endregion
@@ -232,7 +234,15 @@ namespace ImagensRepetidas
                 //usa o path da imagem selecionada para carregar o picturebox
                 try
                 {
-                    picPreview.Image = System.Drawing.Image.FromFile(selectedPath);
+                    System.Drawing.Image imagemDoPreview = System.Drawing.Image.FromFile(selectedPath);
+                    if(imagemDoPreview.Width > imagemDoPreview.Height) {
+                        picPreview.Height = 260;
+                    }
+                    else
+                    {
+                        picPreview.Height = 582;
+                    }
+                    picPreview.Image = imagemDoPreview;
                     //ajusta o tamanho da imagem para caber no picturebox
                     picPreview.SizeMode = PictureBoxSizeMode.StretchImage;
                 }
@@ -269,6 +279,7 @@ namespace ImagensRepetidas
                 // Cria uma nova lista com todos os elementos
                 listasInternasRepetidos.Add(new List<string>(parametros));
             }
+            btReagrupar.Text = "Reagrupar em " + listasInternasRepetidos.Count().ToString() + " folders"; 
         }
 
         private List<string> AgruparElementosListas()
@@ -290,6 +301,7 @@ namespace ImagensRepetidas
         {
             List<string> grupos = AgruparElementosListas();
             lstGrupos.DataSource = grupos;
+            btReagrupar.Text = "Reagrupar em " + listasInternasRepetidos.Count().ToString() + " folders";
         }
 
         private void Escanear()
@@ -332,6 +344,7 @@ namespace ImagensRepetidas
             {
                 MessageBox.Show("Nenhuma imagem similar encontrada.");
             }
+            btReagrupar.Enabled = contador > 0;
         }
 
         private void LimparControles()
