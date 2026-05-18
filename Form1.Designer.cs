@@ -110,6 +110,7 @@
             // btDeletar
             // 
             btDeletar.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btDeletar.Enabled = false;
             btDeletar.Location = new Point(1025, 28);
             btDeletar.Name = "btDeletar";
             btDeletar.Size = new Size(75, 23);
@@ -132,6 +133,7 @@
             // btReagrupar
             // 
             btReagrupar.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            btReagrupar.Enabled = false;
             btReagrupar.Location = new Point(12, 579);
             btReagrupar.Name = "btReagrupar";
             btReagrupar.Size = new Size(264, 23);
@@ -143,6 +145,7 @@
             // btDeletarRepetidos
             // 
             btDeletarRepetidos.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            btDeletarRepetidos.Enabled = false;
             btDeletarRepetidos.Location = new Point(12, 618);
             btDeletarRepetidos.Name = "btDeletarRepetidos";
             btDeletarRepetidos.Size = new Size(264, 23);

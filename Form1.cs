@@ -93,6 +93,7 @@ namespace ImagensRepetidas
 
         private void btDeletarRepetidos_Click(object sender, EventArgs e)
         {
+            btDeletarRepetidos.Enabled = false;
             //Confirmar com usuário sobre apagar todos as imagens repetidas
             DialogResult confirmacao = MessageBox.Show("Deletar todas as " + listaDeletaveis.Count().ToString() + " imagens repetidas?", "ATENÇÃO", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (confirmacao == DialogResult.Yes)
@@ -116,11 +117,7 @@ namespace ImagensRepetidas
             //Busca o caminho da pasta onde estão as imagens
             using (FolderBrowserDialog fbd = new FolderBrowserDialog())
             {
-                if (!Path.Exists(fbd.InitialDirectory))
-                {
-                    fbd.InitialDirectory = "D:\\";
-                }
-
+                string caminhoAnterior = fbd.SelectedPath;
                 if (fbd.ShowDialog() == DialogResult.OK)
                 {
                     gPath = fbd.SelectedPath;
@@ -165,24 +162,31 @@ namespace ImagensRepetidas
         {
             var DicionarioHash = new Dictionary<string, List<string>>();
             var listaArquivos = Directory.GetFiles(path, "*.jpg", SearchOption.AllDirectories);
-
-            foreach (var iArquivo in listaArquivos)
-            {
-                string hash = ProcessamentoImagem.RetornaHashMedio(iArquivo);
-                if (!DicionarioHash.ContainsKey(hash))
-                {
-                    DicionarioHash[hash] = new List<string>();
-                }
-                DicionarioHash[hash].Add(iArquivo);
-            }
-
             var listaDuplicados = new List<List<string>>();
-            foreach (var iItem in DicionarioHash)
-            {
-                if (iItem.Value.Count > 1)
+
+            try {
+                foreach (var iArquivo in listaArquivos)
                 {
-                    listaDuplicados.Add(iItem.Value);
+                    string hash = ProcessamentoImagem.RetornaHashMedio(iArquivo);
+                    if (!DicionarioHash.ContainsKey(hash))
+                    {
+                        DicionarioHash[hash] = new List<string>();
+                    }
+                    DicionarioHash[hash].Add(iArquivo);
                 }
+
+                foreach (var iItem in DicionarioHash)
+                {
+                    if (iItem.Value.Count > 1)
+                    {
+                        listaDuplicados.Add(iItem.Value);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao processar o arquivos:{path}\r {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return new List<List<string>>();
             }
             return listaDuplicados;
         }
@@ -279,7 +283,11 @@ namespace ImagensRepetidas
                 // Cria uma nova lista com todos os elementos
                 listasInternasRepetidos.Add(new List<string>(parametros));
             }
-            btReagrupar.Text = "Reagrupar em " + listasInternasRepetidos.Count().ToString() + " folders"; 
+            if(listasInternasRepetidos.Count > 0)
+            {
+                btReagrupar.Enabled = true;
+                btReagrupar.Text = "Reagrupar em " + listasInternasRepetidos.Count().ToString() + " folders";
+            }                
         }
 
         private List<string> AgruparElementosListas()
@@ -336,8 +344,14 @@ namespace ImagensRepetidas
                 AdicionarOuAgrupar(listaDoGrupo);
             }
             grdMain.DataSource = tabelaPrincipal;
+            grdMain.Columns[0].Width = 500;
             MostrarGrupos();
-            btDeletarRepetidos.Text = "Deletar " + listaDeletaveis.Count().ToString() + " Imagens Repetidas";
+            if(listaDeletaveis.Count > 0)
+            {
+                btDeletarRepetidos.Enabled = true;
+                btDeletarRepetidos.Text = "Deletar " + listaDeletaveis.Count().ToString() + " Imagens Repetidas";
+                btDeletar.Enabled = true;
+            }            
             Cursor = Cursors.Default;
 
             if (tabelaPrincipal.Rows.Count == 0)
