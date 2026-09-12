@@ -163,16 +163,19 @@ namespace ImagensRepetidas
             var DicionarioHash = new Dictionary<string, List<string>>();
             var listaArquivos = Directory.GetFiles(path, "*.jpg", SearchOption.AllDirectories);
             var listaDuplicados = new List<List<string>>();
+            List<ImagemAnalizada> listaObjetosDuplicados = new List<ImagemAnalizada>();
+            List<ImagemAnalizada> listaImagensAnalizadas = new List<ImagemAnalizada>();
 
             try {
                 foreach (var iArquivo in listaArquivos)
                 {
-                    string hash = ProcessamentoImagem.RetornaHashMedio(iArquivo);
-                    if (!DicionarioHash.ContainsKey(hash))
+                    ImagemAnalizada oIA = ProcessamentoImagem.RetornaHashMedio(iArquivo);
+                    listaImagensAnalizadas.Add(oIA);
+                    if (!DicionarioHash.ContainsKey(oIA.Hash))
                     {
-                        DicionarioHash[hash] = new List<string>();
+                        DicionarioHash[oIA.Hash] = new List<string>();
                     }
-                    DicionarioHash[hash].Add(iArquivo);
+                    DicionarioHash[oIA.Hash].Add(iArquivo);
                 }
 
                 foreach (var iItem in DicionarioHash)
@@ -180,6 +183,7 @@ namespace ImagensRepetidas
                     if (iItem.Value.Count > 1)
                     {
                         listaDuplicados.Add(iItem.Value);
+                        listaObjetosDuplicados.AddRange(listaImagensAnalizadas.Where(x => x.Hash == iItem.Key).ToList());
                     }
                 }
             }

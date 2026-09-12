@@ -12,11 +12,15 @@ namespace ImagensRepetidas
     {
 
 
-        public static string RetornaHashMedio(string filePath)
+        public static ImagemAnalizada RetornaHashMedio(string filePath)
         {
             try { 
+                ImagemAnalizada oImagem = new ImagemAnalizada();
                 using (var image = SixLabors.ImageSharp.Image.Load<Rgba32>(filePath))
                 {
+                    oImagem.Altura = image.Height;
+                    oImagem.Largura = image.Width;
+                    oImagem.PathCompleto = filePath;
                     // Reduz para 8x8 em tons de cinza
                     image.Mutate(x => x.Resize(8, 8).Grayscale());
 
@@ -42,8 +46,8 @@ namespace ImagensRepetidas
                     {
                         bits[j] = pixels[j] >= avg ? '1' : '0';
                     }
-
-                    return new string(bits);
+                    oImagem.Hash = new string(bits);
+                    return oImagem;
                 } 
             }
             catch (Exception ex)
