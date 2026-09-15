@@ -10,7 +10,7 @@ namespace ImagensRepetidas
         string gPath = string.Empty;
         List<List<string>> listasInternasRepetidos;
         DataTable tabelaPrincipal;
-        List<string> listaDeletaveis;
+        List<ImagemAnalizada> listaDeletaveis;
 
         public Form1()
         {
@@ -98,9 +98,9 @@ namespace ImagensRepetidas
             DialogResult confirmacao = MessageBox.Show("Deletar todas as " + listaDeletaveis.Count().ToString() + " imagens repetidas?", "ATENÇÃO", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (confirmacao == DialogResult.Yes)
             {
-                foreach (string iImagem in listaDeletaveis)
+                foreach (ImagemAnalizada iImagem in listaDeletaveis)
                 {
-                    File.Delete(iImagem);
+                    File.Delete(iImagem.PathCompleto);
                 }
                 MessageBox.Show("Todas as " + listaDeletaveis.Count().ToString() + " imagens repetidas foram deletadas.", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
@@ -158,12 +158,12 @@ namespace ImagensRepetidas
 
 
 
-        static List<List<string>> EncontarSimilares(string path)
+        static List<List<ImagemAnalizada>> EncontarSimilares(string path)
         {
             var DicionarioHash = new Dictionary<string, List<string>>();
             var listaArquivos = Directory.GetFiles(path, "*.jpg", SearchOption.AllDirectories);
             var listaDuplicados = new List<List<string>>();
-            List<ImagemAnalizada> listaObjetosDuplicados = new List<ImagemAnalizada>();
+            List<List<ImagemAnalizada>> listaObjetosDuplicados = new List<List<ImagemAnalizada>>();
             List<ImagemAnalizada> listaImagensAnalizadas = new List<ImagemAnalizada>();
 
             try {
@@ -183,16 +183,16 @@ namespace ImagensRepetidas
                     if (iItem.Value.Count > 1)
                     {
                         listaDuplicados.Add(iItem.Value);
-                        listaObjetosDuplicados.AddRange(listaImagensAnalizadas.Where(x => x.Hash == iItem.Key).ToList());
+                        listaObjetosDuplicados.Add(listaImagensAnalizadas.Where(x => x.Hash == iItem.Key).ToList());
                     }
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Erro ao processar o arquivos:{path}\r {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return new List<List<string>>();
+                return new List<List<ImagemAnalizada>>();
             }
-            return listaDuplicados;
+            return listaObjetosDuplicados;
         }
 
         //static string RetornaHashMedio(string filePath)
@@ -321,29 +321,29 @@ namespace ImagensRepetidas
             Cursor = Cursors.WaitCursor;
             listasInternasRepetidos = new List<List<string>>();
             int contador = 0;
-            listaDeletaveis = new List<string>();
+            listaDeletaveis = new List<ImagemAnalizada>();
             tabelaPrincipal = new DataTable();
             tabelaPrincipal.Columns.Add("Imagem", typeof(string));
 
-            List<List<string>> resultadoBusca = EncontarSimilares(gPath);
-            foreach (List<string> iGrupo in resultadoBusca)
+            List<List<ImagemAnalizada>> resultadoBusca = EncontarSimilares(gPath);
+            foreach (List<ImagemAnalizada> iGrupo in resultadoBusca)
             {
                 contador++;
                 bool primeiraImagem = true;
                 List<string> listaDoGrupo = new List<string>();
                 tabelaPrincipal.Rows.Add($"Imagem {contador}:");
-                foreach (string iPath in iGrupo)
+                foreach (ImagemAnalizada iObjeto in iGrupo)
                 {
                     if (!primeiraImagem)
                     {
-                        listaDeletaveis.Add(iPath);
+                        listaDeletaveis.Add(iObjeto);
                     }
                     else
                     {
                         primeiraImagem = false;
                     }
-                    tabelaPrincipal.Rows.Add(iPath);
-                    listaDoGrupo.Add(RecuperaDiretorioEnsaio(iPath));
+                    tabelaPrincipal.Rows.Add(iObjeto);
+                    listaDoGrupo.Add(RecuperaDiretorioEnsaio(iObjeto.PathCompleto));
                 }
                 AdicionarOuAgrupar(listaDoGrupo);
             }
