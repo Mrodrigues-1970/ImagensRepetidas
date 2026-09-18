@@ -33,14 +33,12 @@
             lblPath = new Label();
             btProcurarPath = new Button();
             btIniciar = new Button();
-            grdMain = new DataGridView();
-            Imagem = new DataGridViewTextBoxColumn();
             picPreview = new PictureBox();
             btDeletar = new Button();
             lstGrupos = new ListBox();
             btReagrupar = new Button();
             btDeletarRepetidos = new Button();
-            ((System.ComponentModel.ISupportInitialize)grdMain).BeginInit();
+            treeView1 = new TreeView();
             ((System.ComponentModel.ISupportInitialize)picPreview).BeginInit();
             SuspendLayout();
             // 
@@ -75,26 +73,6 @@
             btIniciar.Text = "Iniciar";
             btIniciar.UseVisualStyleBackColor = true;
             btIniciar.Click += btIniciar_Click;
-            // 
-            // grdMain
-            // 
-            grdMain.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            grdMain.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            grdMain.Columns.AddRange(new DataGridViewColumn[] { Imagem });
-            grdMain.Location = new Point(292, 59);
-            grdMain.Name = "grdMain";
-            grdMain.RowHeadersVisible = false;
-            grdMain.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            grdMain.Size = new Size(542, 582);
-            grdMain.TabIndex = 3;
-            grdMain.DoubleClick += grdMain_DoubleClick;
-            // 
-            // Imagem
-            // 
-            Imagem.DataPropertyName = "Imagem";
-            Imagem.HeaderText = "Imagem";
-            Imagem.Name = "Imagem";
-            Imagem.Width = 500;
             // 
             // picPreview
             // 
@@ -154,17 +132,24 @@
             btDeletarRepetidos.UseVisualStyleBackColor = true;
             btDeletarRepetidos.Click += btDeletarRepetidos_Click;
             // 
+            // treeView1
+            // 
+            treeView1.Location = new Point(292, 59);
+            treeView1.Name = "treeView1";
+            treeView1.Size = new Size(542, 582);
+            treeView1.TabIndex = 11;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1264, 729);
+            Controls.Add(treeView1);
             Controls.Add(btDeletarRepetidos);
             Controls.Add(btReagrupar);
             Controls.Add(lstGrupos);
             Controls.Add(btDeletar);
             Controls.Add(picPreview);
-            Controls.Add(grdMain);
             Controls.Add(btIniciar);
             Controls.Add(btProcurarPath);
             Controls.Add(lblPath);
@@ -172,7 +157,6 @@
             Name = "Form1";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Imagens Repetidas";
-            ((System.ComponentModel.ISupportInitialize)grdMain).EndInit();
             ((System.ComponentModel.ISupportInitialize)picPreview).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -184,12 +168,11 @@
         private Label lblPath;
         private Button btProcurarPath;
         private Button btIniciar;
-        private DataGridView grdMain;
-        private DataGridViewTextBoxColumn Imagem;
         private PictureBox picPreview;
         private Button btDeletar;
         private ListBox lstGrupos;
         private Button btReagrupar;
         private Button btDeletarRepetidos;
+        private TreeView treeView1;
     }
 }

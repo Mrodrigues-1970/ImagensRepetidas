@@ -136,22 +136,22 @@ namespace ImagensRepetidas
         }
 
         private void DeletarArquivo() {
-            foreach (DataGridViewRow iRow in grdMain.SelectedRows)
-            {
-                string selectedPath = iRow.Cells[0].Value.ToString();
-                try
-                {
-                    //libera o arquivo que está sendo exibido no picturebox para permitir a exclusão
-                    picPreview.Image = null;
+            //foreach (DataGridViewRow iRow in grdMain.SelectedRows)
+            //{
+            //    string selectedPath = iRow.Cells[0].Value.ToString();
+            //    try
+            //    {
+            //        //libera o arquivo que está sendo exibido no picturebox para permitir a exclusão
+            //        picPreview.Image = null;
 
-                    File.Delete(selectedPath);
-                    //MessageBox.Show("Imagem deletada com sucesso.");
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Erro ao deletar a imagem: {ex.Message}");
-                }
-            }
+            //        File.Delete(selectedPath);
+            //        //MessageBox.Show("Imagem deletada com sucesso.");
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        MessageBox.Show($"Erro ao deletar a imagem: {ex.Message}");
+            //    }
+            //}
         }
 
         #endregion
@@ -236,29 +236,29 @@ namespace ImagensRepetidas
 
         private void grdMain_DoubleClick(object sender, EventArgs e)
         {
-            string selectedPath = grdMain.CurrentCell.Value.ToString();
-            if (File.Exists(selectedPath))
-            {
-                //usa o path da imagem selecionada para carregar o picturebox
-                try
-                {
-                    System.Drawing.Image imagemDoPreview = System.Drawing.Image.FromFile(selectedPath);
-                    if(imagemDoPreview.Width > imagemDoPreview.Height) {
-                        picPreview.Height = 260;
-                    }
-                    else
-                    {
-                        picPreview.Height = 582;
-                    }
-                    picPreview.Image = imagemDoPreview;
-                    //ajusta o tamanho da imagem para caber no picturebox
-                    picPreview.SizeMode = PictureBoxSizeMode.StretchImage;
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Erro ao carregar a imagem: {ex.Message}");
-                }
-            }
+            //string selectedPath = grdMain.CurrentCell.Value.ToString();
+            //if (File.Exists(selectedPath))
+            //{
+            //    //usa o path da imagem selecionada para carregar o picturebox
+            //    try
+            //    {
+            //        System.Drawing.Image imagemDoPreview = System.Drawing.Image.FromFile(selectedPath);
+            //        if(imagemDoPreview.Width > imagemDoPreview.Height) {
+            //            picPreview.Height = 260;
+            //        }
+            //        else
+            //        {
+            //            picPreview.Height = 582;
+            //        }
+            //        picPreview.Image = imagemDoPreview;
+            //        //ajusta o tamanho da imagem para caber no picturebox
+            //        picPreview.SizeMode = PictureBoxSizeMode.StretchImage;
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        MessageBox.Show($"Erro ao carregar a imagem: {ex.Message}");
+            //    }
+            //}
         }
 
         public void AdicionarOuAgrupar(List<string> parametros)
@@ -322,8 +322,8 @@ namespace ImagensRepetidas
             listasInternasRepetidos = new List<List<string>>();
             int contador = 0;
             listaDeletaveis = new List<ImagemAnalizada>();
-            tabelaPrincipal = new DataTable();
-            tabelaPrincipal.Columns.Add("Imagem", typeof(string));
+            //tabelaPrincipal = new DataTable();
+            //tabelaPrincipal.Columns.Add("Imagem", typeof(string));
 
             List<List<ImagemAnalizada>> resultadoBusca = EncontarSimilares(gPath);
             foreach (List<ImagemAnalizada> iGrupo in resultadoBusca)
@@ -331,7 +331,7 @@ namespace ImagensRepetidas
                 contador++;
                 bool primeiraImagem = true;
                 List<string> listaDoGrupo = new List<string>();
-                tabelaPrincipal.Rows.Add($"Imagem {contador}:");
+                //tabelaPrincipal.Rows.Add($"Imagem {contador}:");
                 foreach (ImagemAnalizada iObjeto in iGrupo)
                 {
                     if (!primeiraImagem)
@@ -342,13 +342,12 @@ namespace ImagensRepetidas
                     {
                         primeiraImagem = false;
                     }
-                    tabelaPrincipal.Rows.Add(iObjeto);
+                    //tabelaPrincipal.Rows.Add(iObjeto);
                     listaDoGrupo.Add(RecuperaDiretorioEnsaio(iObjeto.PathCompleto));
                 }
                 AdicionarOuAgrupar(listaDoGrupo);
             }
-            grdMain.DataSource = tabelaPrincipal;
-            grdMain.Columns[0].Width = 500;
+            PreencherTreeView(resultadoBusca);
             MostrarGrupos();
             if(listaDeletaveis.Count > 0)
             {
@@ -358,7 +357,7 @@ namespace ImagensRepetidas
             }            
             Cursor = Cursors.Default;
 
-            if (tabelaPrincipal.Rows.Count == 0)
+            if (resultadoBusca.Count == 0)
             {
                 MessageBox.Show("Nenhuma imagem similar encontrada.");
             }
@@ -367,7 +366,7 @@ namespace ImagensRepetidas
 
         private void LimparControles()
         {
-            grdMain.DataSource = null;
+            //grdMain.DataSource = null;            
             lstGrupos.DataSource = null;
             picPreview.Image = null;
             if(tabelaPrincipal != null)
@@ -384,6 +383,30 @@ namespace ImagensRepetidas
             }
         }
 
+
+        private void PreencherTreeView(List<List<ImagemAnalizada>> listaImagens)
+        {
+            treeView1.Nodes.Clear();
+            for (int i = 0; i < listaImagens.Count; i++)
+            {
+                // Nó principal para cada lista
+                TreeNode nodePrincipal = new TreeNode($"Lista {i + 1}");
+
+                foreach (ImagemAnalizada iImagem in listaImagens[i])
+                {
+                    // Nó filho para cada imagem
+                    TreeNode nodeImagem = new TreeNode(iImagem.PathCompleto);
+                    TreeNode nodeLargura = new TreeNode($"Largura: {iImagem.Largura}"); 
+                    nodeImagem.Nodes.Add(nodeLargura);
+                    TreeNode nodeAltura = new TreeNode($"Altura: {iImagem.Altura}");
+                    nodeImagem.Nodes.Add(nodeAltura);
+
+                    nodePrincipal.Nodes.Add(nodeImagem);
+                }
+                treeView1.Nodes.Add(nodePrincipal);
+            }
+            treeView1.ExpandAll();
+        }
 
     }
 }
